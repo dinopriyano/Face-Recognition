@@ -1,0 +1,2 @@
+include ':app',':tensorflow-lite'
+rootProject.name = "DemoFaceVerificationSecurity"
