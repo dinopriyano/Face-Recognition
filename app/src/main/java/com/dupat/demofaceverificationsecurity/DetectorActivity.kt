@@ -52,7 +52,7 @@ import java.util.*
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
  * objects.
  */
-class DetectorActivity : CameraActivity(), OnImageAvailableListener {
+open class DetectorActivity : CameraActivity(), OnImageAvailableListener {
     var trackingOverlay: OverlayView? = null
     private var sensorOrientation: Int? = null
     lateinit var detector: SimilarityClassifier
@@ -242,7 +242,7 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
     }
 
     override val layoutId: Int
-        protected get() = R.layout.tfe_od_camera_connection_fragment_tracking
+        get() = R.layout.tfe_od_camera_connection_fragment_tracking
     override val desiredPreviewFrameSize: Size?
         get() = Size(640, 480)
 
@@ -261,13 +261,7 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
     }
 
     // Face Processing
-    private fun createTransform(
-        srcWidth: Int,
-        srcHeight: Int,
-        dstWidth: Int,
-        dstHeight: Int,
-        applyRotation: Int
-    ): Matrix {
+    private fun createTransform(srcWidth: Int, srcHeight: Int, dstWidth: Int, dstHeight: Int, applyRotation: Int): Matrix {
         val matrix = Matrix()
         if (applyRotation != 0) {
             if (applyRotation % 90 != 0) {
@@ -318,15 +312,12 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
         builder.show()
     }
 
-    private fun updateResults(
-        currTimestamp: Long,
-        mappedRecognitions: List<Recognition>
-    ) {
+    private fun updateResults(currTimestamp: Long, mappedRecognitions: List<Recognition>) {
         tracker!!.trackResults(mappedRecognitions, currTimestamp)
         trackingOverlay!!.postInvalidate()
         computingDetection = false
         //adding = false;
-        if (mappedRecognitions.size > 0) {
+        if (mappedRecognitions.isNotEmpty()) {
             LOGGER.i("Adding results")
             val rec = mappedRecognitions[0]
             if (rec.extra != null) {
@@ -342,11 +333,7 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
         }
     }
 
-    private fun onFacesDetected(
-        currTimestamp: Long,
-        faces: List<Face>,
-        add: Boolean
-    ) {
+    private fun onFacesDetected(currTimestamp: Long, faces: List<Face>, add: Boolean) {
         cropCopyBitmap = Bitmap.createBitmap(croppedBitmap!!)
         val canvas = Canvas(cropCopyBitmap)
         val paint = Paint()
@@ -358,8 +345,7 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
         minimumConfidence = when (MODE) {
             DetectorMode.TF_OD_API -> MINIMUM_CONFIDENCE_TF_OD_API
         }
-        val mappedRecognitions: MutableList<Recognition> =
-            LinkedList()
+        val mappedRecognitions: MutableList<Recognition> = LinkedList()
 
 
         //final List<Classifier.Recognition> results = new ArrayList<>();
@@ -383,7 +369,7 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
         val cvFace = Canvas(faceBmp!!)
         val saved = false
         for (face in faces) {
-            LOGGER.i("FACE$face")
+            LOGGER.i("FACE $face")
             LOGGER.i("Running detection on face $currTimestamp")
             //results = detector.recognizeImage(croppedBitmap);
             val boundingBox = RectF(face.boundingBox)
@@ -401,10 +387,8 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
 
                 // translates portrait to origin and scales to fit input inference size
                 //cv.drawRect(faceBB, paint);
-                val sx =
-                    TF_OD_API_INPUT_SIZE.toFloat() / faceBB.width()
-                val sy =
-                    TF_OD_API_INPUT_SIZE.toFloat() / faceBB.height()
+                val sx = TF_OD_API_INPUT_SIZE.toFloat() / faceBB.width()
+                val sy = TF_OD_API_INPUT_SIZE.toFloat() / faceBB.height()
                 val matrix = Matrix()
                 matrix.postTranslate(-faceBB.left, -faceBB.top)
                 matrix.postScale(sx, sy)
@@ -440,6 +424,7 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
                     if (conf < 1.0f) {
                         confidence = conf
                         label = result.title!!
+                        LOGGER.i("Mukanya $label")
                         color = if (result.id == "0") {
                             Color.GREEN
                         } else {
@@ -460,6 +445,8 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
                     //flip.postScale(1, -1, targetW / 2.0f, targetH / 2.0f);
                     flip.mapRect(boundingBox)
                 }
+
+                //Result here
                 val result = Recognition(
                     "0", label, confidence, boundingBox
                 )
@@ -478,8 +465,7 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
     }
 
     companion object {
-        private val LOGGER =
-            Logger()
+        private val LOGGER = Logger()
 
         // FaceNet
         //  private static final int TF_OD_API_INPUT_SIZE = 160;

@@ -28,13 +28,7 @@ class BorderedText(interiorColor: Int, exteriorColor: Int, textSize: Float) {
         canvas.drawText(text, posX, posY, interiorPaint)
     }
 
-    fun drawText(
-        canvas: Canvas,
-        posX: Float,
-        posY: Float,
-        text: String?,
-        bgPaint: Paint?
-    ) {
+    fun drawText(canvas: Canvas, posX: Float, posY: Float, text: String?, bgPaint: Paint?) {
         val width = exteriorPaint.measureText(text)
         val textSize = exteriorPaint.textSize
         val paint = Paint(bgPaint)
@@ -44,12 +38,7 @@ class BorderedText(interiorColor: Int, exteriorColor: Int, textSize: Float) {
         canvas.drawText(text!!, posX, posY + textSize, interiorPaint)
     }
 
-    fun drawLines(
-        canvas: Canvas,
-        posX: Float,
-        posY: Float,
-        lines: Vector<String?>
-    ) {
+    fun drawLines(canvas: Canvas, posX: Float, posY: Float, lines: Vector<String?>) {
         var lineNum = 0
         for (line in lines) {
             drawText(canvas, posX, posY - textSize * (lines.size - lineNum - 1), line)
@@ -70,9 +59,7 @@ class BorderedText(interiorColor: Int, exteriorColor: Int, textSize: Float) {
         exteriorPaint.alpha = alpha
     }
 
-    fun getTextBounds(
-        line: String?, index: Int, count: Int, lineBounds: Rect?
-    ) {
+    fun getTextBounds(line: String?, index: Int, count: Int, lineBounds: Rect?) {
         interiorPaint.getTextBounds(line, index, count, lineBounds)
     }
 

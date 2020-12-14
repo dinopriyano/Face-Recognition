@@ -41,8 +41,7 @@ class ImageUtils {
          */
         @JvmOverloads
         fun saveBitmap(bitmap: Bitmap, filename: String = "preview.png") {
-            val root = Environment.getExternalStorageDirectory()
-                .absolutePath + File.separator + "tensorflow"
+            val root = Environment.getExternalStorageDirectory().absolutePath + File.separator + "tensorflow"
             LOGGER.i(
                 "Saving %dx%d bitmap to %s.",
                 bitmap.width,
@@ -67,12 +66,7 @@ class ImageUtils {
             }
         }
 
-        fun convertYUV420SPToARGB8888(
-            input: ByteArray,
-            width: Int,
-            height: Int,
-            output: IntArray
-        ) {
+        fun convertYUV420SPToARGB8888(input: ByteArray, width: Int, height: Int, output: IntArray) {
             val frameSize = width * height
             var j = 0
             var yp = 0
@@ -125,17 +119,7 @@ class ImageUtils {
             return -0x1000000 or (r shl 6 and 0xff0000) or (g shr 2 and 0xff00) or (b shr 10 and 0xff)
         }
 
-        fun convertYUV420ToARGB8888(
-            yData: ByteArray,
-            uData: ByteArray,
-            vData: ByteArray,
-            width: Int,
-            height: Int,
-            yRowStride: Int,
-            uvRowStride: Int,
-            uvPixelStride: Int,
-            out: IntArray
-        ) {
+        fun convertYUV420ToARGB8888(yData: ByteArray, uData: ByteArray, vData: ByteArray, width: Int, height: Int, yRowStride: Int, uvRowStride: Int, uvPixelStride: Int, out: IntArray) {
             var yp = 0
             for (j in 0 until height) {
                 val pY = yRowStride * j
@@ -165,14 +149,7 @@ class ImageUtils {
          * cropping the image if necessary.
          * @return The transformation fulfilling the desired requirements.
          */
-        fun getTransformationMatrix(
-            srcWidth: Int,
-            srcHeight: Int,
-            dstWidth: Int,
-            dstHeight: Int,
-            applyRotation: Int,
-            maintainAspectRatio: Boolean
-        ): Matrix {
+        fun getTransformationMatrix(srcWidth: Int, srcHeight: Int, dstWidth: Int, dstHeight: Int, applyRotation: Int, maintainAspectRatio: Boolean): Matrix {
             val matrix = Matrix()
             if (applyRotation != 0) {
                 if (applyRotation % 90 != 0) {

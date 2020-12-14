@@ -19,10 +19,7 @@ import java.lang.Exception
 import java.util.*
 
 /** Wrapper for the platform log function, allows convenient message prefixing and log disabling.  */
-class Logger constructor(
-    private val tag: String = DEFAULT_TAG,
-    messagePrefix: String? = null
-) {
+class Logger constructor(private val tag: String = DEFAULT_TAG, messagePrefix: String? = null) {
     companion object {
         private const val DEFAULT_TAG = "tensorflow"
         private const val DEFAULT_MIN_LOG_LEVEL = Log.DEBUG
@@ -65,8 +62,7 @@ class Logger constructor(
             }
 
         init {
-            IGNORED_CLASS_NAMES =
-                HashSet(3)
+            IGNORED_CLASS_NAMES = HashSet(3)
             IGNORED_CLASS_NAMES.add("dalvik.system.VMStack")
             IGNORED_CLASS_NAMES.add("java.lang.Thread")
             IGNORED_CLASS_NAMES.add(Logger::class.java.canonicalName)
@@ -92,10 +88,7 @@ class Logger constructor(
     constructor(messagePrefix: String?) : this(DEFAULT_TAG, messagePrefix){}
 
     /** Creates a Logger using the caller's class name as the message prefix.  */
-    constructor(minLogLevel: Int) : this(
-        DEFAULT_TAG,
-        null
-    ) {
+    constructor(minLogLevel: Int) : this(DEFAULT_TAG,null) {
         this.minLogLevel = minLogLevel
     }
 

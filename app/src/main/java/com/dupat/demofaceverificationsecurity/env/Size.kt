@@ -20,8 +20,7 @@ import java.io.Serializable
 import java.util.*
 
 /** Size class independent of a Camera object.  */
-class Size : Comparable<Size>,
-    Serializable {
+class Size : Comparable<Size>, Serializable {
     val width: Int
     val height: Int
 
@@ -78,10 +77,7 @@ class Size : Comparable<Size>,
          * @param rotation Degrees {0, 90, 180, 270} to rotate the size.
          * @return Rotated size.
          */
-        fun getRotatedSize(
-            size: Size,
-            rotation: Int
-        ): Size {
+        fun getRotatedSize(size: Size, rotation: Int): Size {
             return if (rotation % 180 != 0) {
                 // The phone is portrait, therefore the camera is sideways and frame should be rotated.
                 Size(size.height, size.width)

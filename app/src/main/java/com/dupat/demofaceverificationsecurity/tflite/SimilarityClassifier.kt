@@ -20,10 +20,7 @@ import android.graphics.RectF
 /** Generic interface for interacting with different recognition engines.  */
 interface SimilarityClassifier {
     fun register(name: String?, recognition: Recognition?)
-    fun recognizeImage(
-        bitmap: Bitmap?,
-        getExtra: Boolean
-    ): List<Recognition?>?
+    fun recognizeImage(bitmap: Bitmap?, getExtra: Boolean): List<Recognition?>?
 
     fun enableStatLogging(debug: Boolean)
     val statString: String?

@@ -56,7 +56,6 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener,
     private val yuvBytes = arrayOfNulls<ByteArray>(3)
     private var rgbBytes: IntArray? = null
     protected var luminanceStride = 0
-        private set
     private var postInferenceCallback: Runnable? = null
     private var imageConverter: Runnable? = null
     lateinit var bottomSheetLayout: LinearLayout
@@ -72,7 +71,6 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener,
     lateinit var threadsTextView: TextView
     lateinit var btnSwitchCam: FloatingActionButton
     protected var cameraFacing: Int? = null
-        private set
     private var cameraId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,7 +80,7 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener,
         //useFacing = intent.getIntExtra(KEY_USE_FACING, CameraCharacteristics.LENS_FACING_FRONT);
         cameraFacing = intent.getIntExtra(
             KEY_USE_FACING,
-            CameraCharacteristics.LENS_FACING_BACK
+            CameraCharacteristics.LENS_FACING_FRONT
         )
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContentView(R.layout.tfe_od_activity_camera)
@@ -104,17 +102,17 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener,
         sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
         bottomSheetArrowImageView = findViewById(R.id.bottom_sheet_arrow)
         btnSwitchCam = findViewById(R.id.fab_switchcam)
-        val vto = gestureLayout.getViewTreeObserver()
+        val vto = gestureLayout.viewTreeObserver
         vto.addOnGlobalLayoutListener(
             object : OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                        gestureLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this)
+                        gestureLayout.viewTreeObserver.removeGlobalOnLayoutListener(this)
                     } else {
-                        gestureLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this)
+                        gestureLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
                     }
                     //                int width = bottomSheetLayout.getMeasuredWidth();
-                    val height = gestureLayout.getMeasuredHeight()
+                    val height = gestureLayout.measuredHeight
                     sheetBehavior!!.peekHeight = height
                 }
             })
@@ -161,13 +159,14 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener,
         switchCamera()
     }
 
-    fun switchCamera() {
+    private fun switchCamera() {
         val intent = intent
-        if (cameraFacing == CameraCharacteristics.LENS_FACING_FRONT) {
-            cameraFacing = CameraCharacteristics.LENS_FACING_BACK
+        cameraFacing = if (cameraFacing == CameraCharacteristics.LENS_FACING_FRONT) {
+            CameraCharacteristics.LENS_FACING_BACK
         } else {
-            cameraFacing = CameraCharacteristics.LENS_FACING_FRONT
+            CameraCharacteristics.LENS_FACING_FRONT
         }
+
         intent.putExtra(KEY_USE_FACING, cameraFacing!!)
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
         restartWith(intent)
@@ -297,6 +296,7 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener,
     @Synchronized
     public override fun onResume() {
         LOGGER.d("onResume $this")
+        Toast.makeText(this,"Resume",Toast.LENGTH_LONG).show()
         super.onResume()
         handlerThread = HandlerThread("inference")
         handlerThread!!.start()
@@ -455,7 +455,7 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener,
         fragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
 
-    protected fun fillBytes(
+    private fun fillBytes(
         planes: Array<Plane>,
         yuvBytes: Array<ByteArray?>
     ) {
